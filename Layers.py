@@ -1,6 +1,5 @@
 import tensorflow as tf
 
-
 def dense_layer(x, units, activation=tf.nn.relu, name='dense'):
     prev_units = int(x.shape[1])
 
@@ -34,3 +33,7 @@ def deconv_layer(x, kernels, kernel_size=3, strides=1, padding='VALID', name='De
 
     return tf.layers.conv2d_transpose(x, kernels, kernel_size, (strides, strides), padding, activation=activation,
                                       kernel_initializer=init, name=name)
+
+
+def batch_norm(x,name):
+    pass
