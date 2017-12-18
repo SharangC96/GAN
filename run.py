@@ -24,7 +24,7 @@ with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
     coord, threads = G1.start_queues(sess)
 
-    G1.start_training(101, path='/home/sharang/Documents/ML/GAN/trained_params/', verbose=True, save=True,
+    G1.start_training(5001, path='/home/sharang/Documents/ML/GAN/trained_params/', verbose=True, save=True,
                       load=False,sess=sess)
 
     plt.imshow((sess.run(G1.fake_image)[0]*127.5+127.5).astype(np.float32))
