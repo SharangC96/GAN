@@ -115,7 +115,7 @@ class GAN:
 
         return coord,threads
 
-    def start_training(self, iterations, path, sess, verbose=False, save=True, load=True,):
+    def start_training(self, iterations, path, sess, verbose=False, save=True, load=True):
 
         saver = tf.train.Saver()
 
@@ -128,9 +128,9 @@ class GAN:
                 _,_,gloss,dloss=sess.run([self.disc_train_step,self.gen_train_step,
                                           self.disc_loss,self.gen_loss])
 
-                if(i%1==0):
+                if(i%100==0):
 
-                    print('After Iteration:',i,'\nGenerator loss is:',gloss,'\nDiscriminator loss is:',dloss)
+                    print('After Iteration:',i,'\nGenerator loss is:',gloss,'\nDiscriminator loss is:',dloss,'\n')
 
             else:
                 sess.run([self.disc_train_step, self.gen_train_step])
@@ -142,7 +142,10 @@ class GAN:
 
     def save_sample_png(self,sess,path,name='samples'):
 
-        fake_images=sess.run(self.fake_image).astype(np.uint8)
+        fake_images=sess.run(self.fake_image)
+        fake_images = fake_images*127.5 + 127.5
+        fake_images = fake_images.astype(np.uint8)
+
         new_im = Image.new('RGB', (32*16, 32*8))
 
         index = 0
