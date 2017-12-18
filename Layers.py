@@ -36,4 +36,13 @@ def deconv_layer(x, kernels, kernel_size=3, strides=1, padding='VALID', name='De
 
 
 def batch_norm(x,name):
-    pass
+
+    mean,var=tf.nn.moments(x,axes=[0],keep_dims=True)
+
+    x_norm=tf.divide((x-mean),tf.sqrt(var))
+
+    with tf.variable_scope(name):
+        scale = tf.get_variable('scale',shape=[1,1,1,x.shape[3]],dtype=tf.float32)
+        offset  = tf.get_variable('offset',shape=[1,1,1,x.shape[3]],dtype=tf.float32)
+
+    return tf.add(tf.multiply(x_norm,scale,name='sacle'),offset)

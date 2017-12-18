@@ -1,9 +1,14 @@
 from Layers import *
 import tensorflow as tf
+import numpy as np
 
 class GAN:
 
-    def __init__(self,train=True):
+    def __init__(self,batch_size=128,train=True):
+        self.batch_size=batch_size
+
+    def real_images(self):
+        #some queue will return images
         pass
 
     def generate_image(self):
@@ -24,7 +29,7 @@ class GAN:
 
         return x
 
-    def create_dicriminator(self,x,name='Dicriminator',reuse=False):
+    def create_discriminator(self,x,name='Dicriminator',reuse=False):
 
         with tf.variable_scope(name_or_scope=name,reuse=reuse):
 
@@ -38,5 +43,36 @@ class GAN:
 
         return x
 
+
     def loss(self):
 
+        fake_image = self.generate_image()
+        discriminator_out_fake = self.create_discriminator(fake_image,reuse=True)
+        discriminator_out_real = self.create_discriminator(,reuse=True)
+
+        pred_real=np.stack(np.array([0.0]*self.batch_size),np.array([1.0]*self.batch_size),axis=1).astype(np.float32)
+        pred_fake=1-pred_real
+
+        gen_loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=pred_real, logits = discriminator_out_fake))
+        disc_loss_real = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=pred_real),logits=disc_loss_real)
+        disc_loss_fake = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=pred_fake),logits=disc_loss_fake)
+
+        return {'gen_loss':gen_loss,'disc_loss':(disc_loss_fake+disc_loss_real)/2.0}
+
+    def train_step_op(self):
+        """
+        It returns tensorflow ops in form of a list
+
+        [0] for gen_train_step
+        [1] for disc_train_step
+
+        run them in a session to begin training
+
+        """
+
+        loss=self.loss()
+        optimizer=tf.train.AdamOptimizer(learning_rate=0.0002,beta1=0.5)
+        gen_train_step = optimizer.minimize(loss['gen_loss'])
+        disc_train_step = optimizer.minimize(loss['disc_loss'])
+
+        return [gen_train_step,disc_train_step]
